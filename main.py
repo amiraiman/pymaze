@@ -20,17 +20,46 @@ def print_maze(win, start_x1, start_y1):
     row_x1 = start_x1
     row_y1 = start_y1
     prev_cell = None
-    for _ in range(10):
+    for i in range(10):
         cell = Cell(win)
-        if prev_cell:
+
+        if i == 9:
+            cell.has_bottom_wall = False
+            cell.has_left_wall = False
+        elif prev_cell:
             cell.has_left_wall = False
             cell.has_right_wall = False
         else:
             cell.has_right_wall = False
 
         cell.draw(row_x1, row_y1, row_x1 + cell_width, row_y1 + cell_width)
-        row_x1 += cell_width
+        if prev_cell:
+            prev_cell.draw_move(cell)
+
         prev_cell = cell
+        row_x1 += cell_width
+
+    row_y1 += cell_width
+    row_x1 -= cell_width
+    for i in range(10):
+        cell = Cell(win)
+
+        if i == 0:
+            cell.has_top_wall = False
+            cell.has_right_wall = False
+        elif i == 9:
+            cell.has_bottom_wall = False
+            cell.has_left_wall = False
+        elif prev_cell:
+            cell.has_left_wall = False
+            cell.has_right_wall = False
+
+        cell.draw(row_x1, row_y1, row_x1 + cell_width, row_y1 + cell_width)
+        if prev_cell:
+            prev_cell.draw_move(cell, True)
+
+        prev_cell = cell
+        row_x1 += cell_width
 
 
 win = Window(800, 600)

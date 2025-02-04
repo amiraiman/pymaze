@@ -58,3 +58,12 @@ class Cell:
             self._win.draw_line(
                 Line(Point(self._x1, self._y2), Point(self._x2, self._y2)), "white"
             )
+
+    def draw_move(self, to_cell, undo=False):
+        color = "red" if undo else "gray"
+        start_x = (self._x1 + self._x2) // 2
+        start_y = (self._y1 + self._y2) // 2
+        end_x = (to_cell._x1 + to_cell._x2) // 2
+        end_y = (to_cell._y1 + to_cell._y2) // 2
+
+        self._win.draw_line(Line(Point(start_x, start_y), Point(end_x, end_y)), color)
