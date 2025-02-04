@@ -7,6 +7,11 @@ class Window:
         self.__root.title("My Window")
         self.__root.protocol("WM_DELETE_WINDOW", self.close)
 
+        self.__canvas = tkinter.Canvas(
+            self.__root, width=width, height=height, background="black"
+        )
+        self.__canvas.pack(fill="both", expand=True)
+
         self.__running = False
 
     def run(self):
