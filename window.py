@@ -14,16 +14,18 @@ class Window:
 
         self.__running = False
 
-    def run(self):
-        self.__running = True
-        self.__root.mainloop()
-
-        while self.__running:
-            self.__root.update()
-
     def close(self):
         self.__running = False
-        self.__root.destroy()
 
     def draw_line(self, line, color):
         line.draw(self.__canvas, color)
+
+    def redraw(self):
+        self.__root.update_idletasks()
+        self.__root.update()
+
+    def wait_for_close(self):
+        self.__running = True
+        while self.__running:
+            self.redraw()
+        print("window closed...")
