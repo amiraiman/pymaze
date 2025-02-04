@@ -24,3 +24,6 @@ class Window:
     def close(self):
         self.__running = False
         self.__root.destroy()
+
+    def draw_line(self, line):
+        line.draw(self.__canvas)
