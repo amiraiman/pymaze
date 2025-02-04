@@ -25,5 +25,5 @@ class Window:
         self.__running = False
         self.__root.destroy()
 
-    def draw_line(self, line):
-        line.draw(self.__canvas)
+    def draw_line(self, line, color):
+        line.draw(self.__canvas, color)
