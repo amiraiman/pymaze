@@ -65,33 +65,27 @@ class Maze:
         self._create_cells()
 
     def _create_cells(self):
-        for i in range(self._num_rows):
-            rows = []
-            for j in range(self._num_cols):
-                rows.append(self._draw_cells(i, j))
-            self._cells.append(rows)
+        for i in range(self._num_cols):
+            cols = []
+            for j in range(self._num_rows):
+                cols.append(Cell(self._win))
+            self._cells.append(cols)
 
-    def _draw_cells(self, i, j):
-        cell = Cell(self._win)
-        start_x = self._x1 + j * self._size_x
-        start_y = self._y1 + i * self._size_y
+        for i in range(self._num_cols):
+            for j in range(self._num_rows):
+                self._draw_cell(i, j)
 
-        cell.draw(
+    def _draw_cell(self, i, j):
+        start_x = self._x1 + i * self._size_x
+        start_y = self._y1 + j * self._size_y
+        self._cells[i][j].draw(
             start_x,
             start_y,
             start_x + self._size_x,
             start_y + self._size_y,
         )
-        # cell.draw(
-        #     self._x1 + j * self._size_x,
-        #     self._y1 + i * self._size_y,
-        #     self._x1 + (j + 1) * self._size_x,
-        #     self._y1 + (i + 1) * self._size_y,
-        # )
-
         self._animate()
-        return cell
 
     def _animate(self):
         self._win.redraw()
-        sleep(0.05)
+        sleep(0.005)
