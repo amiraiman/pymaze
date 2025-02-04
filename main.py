@@ -1,5 +1,4 @@
-from window import Window
-from graphics import Point, Line
+from graphics import Point, Line, Window
 from maze import Cell, Maze
 
 
