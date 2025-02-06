@@ -204,3 +204,67 @@ class Maze:
         for col in self._cells:
             for cell in col:
                 cell.visited = False
+
+    def solve(self):
+        self._log("SOLVING MAZE")
+        return self._solve_r(0, 0)
+
+    def _solve_r(self, i, j):
+        self._animate()
+        end = self._cells[self._num_cols - 1][self._num_rows - 1]
+        current = self._cells[i][j]
+        current.visited = True
+
+        self._log(f"VISITING ({i}, {j})")
+        if current == end:
+            return True
+
+        # Go left
+        to_i = i - 1
+        if 0 <= to_i < self._num_cols:
+            to = self._cells[to_i][j]
+            if not to.visited and not current.has_left_wall and not to.has_right_wall:
+                current.draw_move(to)
+                status = self._solve_r(to_i, j)
+                if status:
+                    return True
+                else:
+                    to.draw_move(current, True)
+
+        # Go right
+        to_i = i + 1
+        if 0 <= to_i < self._num_cols:
+            to = self._cells[to_i][j]
+            if not to.visited and not current.has_right_wall and not to.has_left_wall:
+                current.draw_move(to)
+                status = self._solve_r(to_i, j)
+                if status:
+                    return True
+                else:
+                    to.draw_move(current, True)
+
+        # Go top
+        to_j = j - 1
+        if 0 <= to_j < self._num_rows:
+            to = self._cells[i][to_j]
+            if not to.visited and not current.has_top_wall and not to.has_bottom_wall:
+                current.draw_move(to)
+                status = self._solve_r(i, to_j)
+                if status:
+                    return True
+                else:
+                    to.draw_move(current, True)
+
+        # Go bottom
+        to_j = j + 1
+        if 0 <= to_j < self._num_rows:
+            to = self._cells[i][to_j]
+            if not to.visited and not current.has_bottom_wall and not to.has_top_wall:
+                current.draw_move(to)
+                status = self._solve_r(i, to_j)
+                if status:
+                    return True
+                else:
+                    to.draw_move(current, True)
+
+        return False
