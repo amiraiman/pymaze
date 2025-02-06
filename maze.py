@@ -76,7 +76,18 @@ class Cell:
 
 
 class Maze:
-    def __init__(self, x1, y1, num_rows, num_cols, size_x, size_y, win=None, seed=None):
+    def __init__(
+        self,
+        x1,
+        y1,
+        num_rows,
+        num_cols,
+        size_x,
+        size_y,
+        win=None,
+        seed=None,
+        logging=False,
+    ):
         self._x1 = x1
         self._y1 = y1
         self._num_rows = num_rows
@@ -85,13 +96,16 @@ class Maze:
         self._size_y = size_y
         self._win = win
         self._cells = []
+        self._logging = logging
 
-        self._create_cells()
         if seed is not None:
             random.seed(seed)
+
+        self._create_cells()
         if self._num_cols != 0 and self._num_rows != 0:
             self._break_entrance_and_exit()
             self._break_walls_r(0, 0)
+            self._reset_cells_visited()
 
     def _create_cells(self):
         for i in range(self._num_cols):
@@ -135,8 +149,12 @@ class Maze:
         self._draw_cell(0, 0)
         self._draw_cell(self._num_cols - 1, self._num_rows - 1)
 
+    def _log(self, msg):
+        if self._logging:
+            print(msg)
+
     def _break_walls_r(self, i, j):
-        print(f"Visiting cell ({i}, {j})")
+        self._log(f"Visiting cell ({i}, {j})")
         current = self._cells[i][j]
         current.visited = True
 
@@ -155,14 +173,14 @@ class Maze:
                         possible_moves.append((x, y))
 
             if len(possible_moves) == 0:
-                print(f"No move from cell ({i}, {j}). Exiting.")
+                self._log(f"No more moves from cell ({i}, {j}). Exiting.")
                 self._draw_cell(i, j)
                 return
 
-            print(f"Possible moves from cell ({i}, {j}) {possible_moves}")
+            self._log(f"Possible moves from cell ({i}, {j}) {possible_moves}")
             chosen_i, chosen_j = random.choice(possible_moves)
             chosen = self._cells[chosen_i][chosen_j]
-            print(f"Move from ({i}, {j}) to ({chosen_i}, {chosen_j}).")
+            self._log(f"Move from ({i}, {j}) to ({chosen_i}, {chosen_j}).")
 
             if chosen_i == (i - 1):
                 current.has_left_wall = False
@@ -181,3 +199,8 @@ class Maze:
                 chosen.has_bottom_wall = False
 
             self._break_walls_r(chosen_i, chosen_j)
+
+    def _reset_cells_visited(self):
+        for col in self._cells:
+            for cell in col:
+                cell.visited = False
