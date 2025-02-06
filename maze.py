@@ -1,5 +1,6 @@
 from time import sleep
 from graphics import Line, Point
+import random
 
 
 class Cell:
@@ -8,6 +9,7 @@ class Cell:
         self.has_right_wall = True
         self.has_top_wall = True
         self.has_bottom_wall = True
+        self.visited = False
 
         self._win = win
         self._x1 = 0
@@ -74,7 +76,7 @@ class Cell:
 
 
 class Maze:
-    def __init__(self, x1, y1, num_rows, num_cols, size_x, size_y, win=None):
+    def __init__(self, x1, y1, num_rows, num_cols, size_x, size_y, win=None, seed=None):
         self._x1 = x1
         self._y1 = y1
         self._num_rows = num_rows
@@ -85,7 +87,11 @@ class Maze:
         self._cells = []
 
         self._create_cells()
-        self._break_entrance_and_exit()
+        if seed is not None:
+            random.seed(seed)
+        if self._num_cols != 0 and self._num_rows != 0:
+            self._break_entrance_and_exit()
+            self._break_walls_r(0, 0)
 
     def _create_cells(self):
         for i in range(self._num_cols):
@@ -120,9 +126,6 @@ class Maze:
         sleep(0.005)
 
     def _break_entrance_and_exit(self):
-        if self._num_cols == 0 or self._num_rows == 0:
-            return
-
         entrance_cell = self._cells[0][0]
         exit_cell = self._cells[self._num_cols - 1][self._num_rows - 1]
 
@@ -131,3 +134,50 @@ class Maze:
 
         self._draw_cell(0, 0)
         self._draw_cell(self._num_cols - 1, self._num_rows - 1)
+
+    def _break_walls_r(self, i, j):
+        print(f"Visiting cell ({i}, {j})")
+        current = self._cells[i][j]
+        current.visited = True
+
+        while True:
+            possible_moves_points = [
+                (i - 1, j),
+                (i + 1, j),
+                (i, j - 1),
+                (i, j + 1),
+            ]
+            possible_moves = []
+
+            for x, y in possible_moves_points:
+                if 0 <= x < self._num_cols and 0 <= y < self._num_rows:
+                    if not self._cells[x][y].visited:
+                        possible_moves.append((x, y))
+
+            if len(possible_moves) == 0:
+                print(f"No move from cell ({i}, {j}). Exiting.")
+                self._draw_cell(i, j)
+                return
+
+            print(f"Possible moves from cell ({i}, {j}) {possible_moves}")
+            chosen_i, chosen_j = random.choice(possible_moves)
+            chosen = self._cells[chosen_i][chosen_j]
+            print(f"Move from ({i}, {j}) to ({chosen_i}, {chosen_j}).")
+
+            if chosen_i == (i - 1):
+                current.has_left_wall = False
+                chosen.has_right_wall = False
+
+            if chosen_i == (i + 1):
+                current.has_right_wall = False
+                chosen.has_left_wall = False
+
+            if chosen_j == (j + 1):
+                current.has_bottom_wall = False
+                chosen.has_top_wall = False
+
+            if chosen_j == (j - 1):
+                current.has_top_wall = False
+                chosen.has_bottom_wall = False
+
+            self._break_walls_r(chosen_i, chosen_j)
